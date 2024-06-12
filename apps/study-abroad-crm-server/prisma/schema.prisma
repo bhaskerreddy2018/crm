@@ -1,0 +1,80 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Student {
+  address      String?
+  applications Application[]
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  dateOfBirth  DateTime?
+  email        String?
+  id           String        @id @default(cuid())
+  name         String?
+  phoneNumber  String?
+  roadMaps     RoadMap[]
+  updatedAt    DateTime      @updatedAt
+}
+
+model Application {
+  createdAt            DateTime               @default(now())
+  eligibleUniversities Json?
+  id                   String                 @id @default(cuid())
+  status               EnumApplicationStatus?
+  student              Student?               @relation(fields: [studentId], references: [id])
+  studentId            String?
+  university           University?            @relation(fields: [universityId], references: [id])
+  universityId         String?
+  updatedAt            DateTime               @updatedAt
+}
+
+model Appointment {
+  createdAt DateTime  @default(now())
+  date      DateTime?
+  id        String    @id @default(cuid())
+  location  String?
+  student   Student?  @relation(fields: [studentId], references: [id])
+  studentId String?
+  time      DateTime?
+  updatedAt DateTime  @updatedAt
+}
+
+model University {
+  applications   Application[]
+  coursesOffered String?
+  createdAt      DateTime      @default(now())
+  id             String        @id @default(cuid())
+  location       String?
+  name           String?
+  roadMap        RoadMap?      @relation(fields: [roadMapId], references: [id])
+  roadMapId      String?
+  updatedAt      DateTime      @updatedAt
+}
+
+model RoadMap {
+  createdAt    DateTime     @default(now())
+  description  String?
+  id           String       @id @default(cuid())
+  student      Student?     @relation(fields: [studentId], references: [id])
+  studentId    String?
+  universities University[]
+  updatedAt    DateTime     @updatedAt
+}
+
+model Counsellor {
+  createdAt   DateTime @default(now())
+  email       String?
+  id          String   @id @default(cuid())
+  name        String?
+  phoneNumber String?
+  updatedAt   DateTime @updatedAt
+}
+
+enum EnumApplicationStatus {
+  Option1
+}
